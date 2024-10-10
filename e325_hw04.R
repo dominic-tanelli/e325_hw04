@@ -98,16 +98,19 @@ ggplot(jan_and_mar_2021, aes(x = Date, y = AirTemp)) +
     y = expression("Air Temperature (" * degree * "C)")) + theme_minimal()
 
 # Question 5
-cat("\nQuestion 5 Answer: \n")
 mar_and_apr_2021 <- weather %>%
   filter(Date >= as.POSIXct("2021-03-01") & Date < as.POSIXct("2021-05-01")) %>%
   select(Date, Precip, AirTemp)
+mar_and_apr_2021 <- mar_and_apr_2021 %>%
+  mutate(AirTemp_F = (AirTemp * 9/5) + 32)
 for (i in 1:nrow(mar_and_apr_2021)) {
-  if (mar_and_apr_2021$AirTemp[i] < 35 || 
-      (i > 1 && mar_and_apr_2021$AirTemp[i - 1] < 35)) {
-    mar_and_apr_2021$AirTemp[i] <- "NA"
+  if (mar_and_apr_2021$AirTemp_F[i] < 35 || 
+      (i > 1 && mar_and_apr_2021$AirTemp_F[i - 1] < 35)) {
+    mar_and_apr_2021$Precip[i] <- NA
   }
 }
+cat("\nQuestion 5 Answer: \n")
+print(sum(!is.na(mar_and_apr_2021$Precip)))
 
 # Question 6
 cat("\nQuestion 6 Answer: See Word PDF\n")
