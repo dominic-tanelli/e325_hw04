@@ -21,7 +21,7 @@ january_2022 <- weather %>%
            as.POSIXct("2022-02-01")) %>%
   select(Date, AirTemp)
 january_2022$AirTemp_RollingAvg <- NA
-window_size <- 9
+window_size <- 8
 for (i in window_size:nrow(january_2022)) {
   january_2022$AirTemp_RollingAvg[i] <- mean(january_2022$AirTemp[(
     i - window_size + 1):i], na.rm = TRUE)
