@@ -40,39 +40,30 @@ may_and_june_2021 <- weather %>%
   filter(Date >= as.POSIXct("2021-05-01") & Date < 
            as.POSIXct("2021-07-01")) %>%
   select(Date, SolRad)
-data_overview <- function(may_and_june_2021) {
-  summary(may_and_june_2021$SolRad)
-  sum(is.na(may_and_june_2021$SolRad))
-  table(may_and_june_2021$SolRad)
-}
-data_overview(may_and_june_2021)
+cat("\nPrompt 2 Answer: \n")
 ggplot(may_and_june_2021, aes(x = Date, y = SolRad)) + 
   geom_line(color = "blue") + labs(
     title = "Solar Radiation in May and June 2021", x = "Date", 
     y = "Solar Radiation (W/m²)") + theme_minimal()
-# Create a day column
-may_and_june_2021$Day <- as.Date(may_and_june_2021$Date)
-
-# Calculate daily average solar radiation
-daily_avg <- may_and_june_2021 %>%
-  group_by(Day) %>%
-  summarize(avg_SolRad = mean(SolRad, na.rm = TRUE))
-
-# Plot daily average solar radiation
-ggplot(daily_avg, aes(x = Day, y = avg_SolRad)) +
-  geom_line(color = "red") +
-  labs(title = "Daily Average Solar Radiation for May and June 2021",
-       x = "Date", y = "Average Solar Radiation (W/m²)") +
-  theme_minimal()
 
 # Prompt 3
+timeCheck900 <- function(x){
+  intervals <- x[-length(x)] %--% x[-1]
+  interval_times <- int_length(intervals)
+  intervals[interval_times != 900]
+  
+}
+cat("\nPrompt 3 Answer: \n")
+timeCheck900(weather$Date)
 
 # Homework
 # Question 1
 clinton <- weather %>%
   filter(AirTemp >= 0) %>%
   filter(abs(XLevel - YLevel) <= 2)
-cat("\nQuestion 1 Answer: \n")
+cat("\nQuestion 1 Answer (Weather): \n")
+print(sum(is.na(weather$Precip)))
+cat("\nQuestion 1 Answer (Clinton): \n")
 print(sum(is.na(clinton$Precip)))
 
 # Question 2
@@ -81,8 +72,19 @@ clinton$BatVoltFlag <- ifelse(clinton$BatVolt < 8.5, "Low", "Normal")
 print(clinton$BatVoltFlag)
 
 # Question 3
-cat("\nQuestion 3 Answer: \n")
-
+check_unrealistic_values <- function(df) {
+  min_temp <- -50
+  max_temp <- 50
+  max_solar_radiation <- 1200
+  min_solar_radiation <- 0
+  df$unrealistic_air_temp <- ifelse(df$AirTemp < min_temp | df$AirTemp > max_temp, TRUE, FALSE)
+  df$unrealistic_solar_radiation <- ifelse(df$SolRad < min_solar_radiation | df$SolRad > max_solar_radiation, TRUE, FALSE)
+  return(df)
+}
+cat("\nQuestion 3 Answer (Weather): \n")
+print(check_unrealistic_values(weather)) # No true statements for weather
+cat("\nQuestion 3 Answer (Clinton): \n")
+print(check_unrealistic_values(clinton)) # No true statements for clinton
 
 # Question 4
 jan_and_mar_2021 <- weather %>%
